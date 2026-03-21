@@ -1,0 +1,42 @@
+# 👑 House of Qui Sovereign Git Ignore Protocol
+
+# 🧱 System Logs & Artefacts
+*.log
+dev.log
+build.zip
+build_demo.zip
+imperial_archive/
+unsigned-test/
+test-project/
+.qui/
+
+# 🛡️ Imperial Dependencies
+node_modules/
+**/node_modules/
+package-lock.json
+
+# ⚔️ Ritual Artifacts (Builds)
+dist/
+**/dist/
+.vite/
+
+# 🧩 Security Challenges (Local Env)
+.env
+.env.*
+!.env.example
+
+# 🏛️ Sovereign IDE Protocol
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 🔮 Testing Records
+coverage/
+*.lcov
+test-results/
+
+# 🔥 Temporary Rituals
+tmp/
+/temp/

@@ -1,0 +1,9 @@
+{
+  "id": "deployment",
+  "name": "Deployment Plugin",
+  "version": "1.0.0",
+  "description": "Manages project deployments and releases",
+  "author": "House of Qui",
+  "dependencies": [],
+  "enabled": true
+}

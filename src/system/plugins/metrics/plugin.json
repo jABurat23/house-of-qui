@@ -1,0 +1,9 @@
+{
+  "id": "metrics",
+  "name": "Metrics Plugin",
+  "version": "1.0.0",
+  "description": "Collects and exposes system and application metrics",
+  "author": "House of Qui",
+  "dependencies": [],
+  "enabled": true
+}

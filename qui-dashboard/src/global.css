@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #02040a;
+  --color-primary: #d4af37;
+  --color-primary-foreground: #02040a;
+  --color-accent: #00f0ff;
+  --color-crimson: #8b0000;
+  
+  --font-cinzel: "Cinzel", serif;
+  --font-inter: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --shadow-imperial-gold: 0 0 15px rgba(212, 175, 55, 0.3);
+  --shadow-neon-cyan: 0 0 15px rgba(0, 240, 255, 0.3);
+  
+  --background-image-imperial-gradient: radial-gradient(circle, #0b0f1a, #02040a);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-inter);
+    @apply antialiased overflow-hidden min-h-screen;
+    background-image: radial-gradient(circle at center, #0b152d 0%, #02040a 100%);
+  }
+
+  h1, h2, h3, h4, .font-cinzel {
+    font-family: var(--font-cinzel);
+    @apply tracking-widest text-primary;
+  }
+}
+
+@layer components {
+  .imperial-panel {
+    @apply border border-primary/20 backdrop-blur-xl rounded-2xl shadow-imperial-gold;
+    background-color: rgba(10, 15, 30, 0.6);
+  }
+
+  .whisper-panel {
+    @apply border-l border-primary/10 backdrop-blur-md;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .imperial-btn {
+    @apply px-6 py-3 border border-primary/40 text-primary uppercase text-xs tracking-widest transition-all duration-300;
+    font-family: var(--font-cinzel);
+  }
+
+  .imperial-btn:hover {
+    @apply bg-primary/10 border-primary shadow-imperial-gold;
+  }
+
+  .imperial-tab-active {
+    @apply border-b-2 border-accent text-accent shadow-neon-cyan duration-500;
+  }
+}
+
+/* Ceremonial Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 hover:bg-primary/40 rounded-full;
+}
+
+/* Custom Dynasty Transitions */
+.chamber-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.chamber-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
