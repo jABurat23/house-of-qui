@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Crown, 
@@ -118,7 +118,7 @@ export default function CourtLayout({
                Pulse Stable
              </div>
              <div className="h-4 w-[1px] bg-primary/10" />
-             <div className="text-[10px] text-primary font-cinzel">Current Cycle: 2026.03.21</div>
+             <div className="text-[10px] text-primary font-cinzel">Current Cycle: {new Date().toLocaleDateString('en-CA').replace(/-/g, '.')}</div>
           </div>
         </header>
 

@@ -1,42 +1,129 @@
-# 👑 House of Qui Sovereign Git Ignore Protocol
+# ──────────────────────────────────────────────────────
+# 🏛️  HOUSE OF QUI — Sovereign .gitignore Protocol
+# Every secret stays behind the Imperial Gate.
+# ──────────────────────────────────────────────────────
 
-# 🧱 System Logs & Artefacts
-*.log
-dev.log
-build.zip
-build_demo.zip
-imperial_archive/
-unsigned-test/
-test-project/
-.qui/
 
-# 🛡️ Imperial Dependencies
-node_modules/
-**/node_modules/
-package-lock.json
-
-# ⚔️ Ritual Artifacts (Builds)
-dist/
-**/dist/
-.vite/
-
-# 🧩 Security Challenges (Local Env)
+# ╔══════════════════════════════╗
+# ║   🔐 ENVIRONMENT & SECRETS  ║
+# ╚══════════════════════════════╝
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
 
-# 🏛️ Sovereign IDE Protocol
-.vscode/
+
+# ╔══════════════════════════════╗
+# ║   📦 DEPENDENCIES           ║
+# ╚══════════════════════════════╝
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+
+# ╔══════════════════════════════╗
+# ║   ⚔️  BUILD ARTIFACTS       ║
+# ╚══════════════════════════════╝
+dist/
+**/dist/
+dist-ssr/
+build/
+.vite/
+*.tsbuildinfo
+
+
+# ╔══════════════════════════════╗
+# ║   📜 LOGS & RUNTIME DATA    ║
+# ╚══════════════════════════════╝
+*.log
+logs/
+dev.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+
+# ╔══════════════════════════════╗
+# ║   🗜️  ARCHIVES & BINARIES   ║
+# ╚══════════════════════════════╝
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.rar
+*.7z
+build.zip
+build_demo.zip
+
+
+# ╔══════════════════════════════╗
+# ║   🏯 IMPERIAL INTERNALS     ║
+# ╚══════════════════════════════╝
+# Sovereign runtime config, archives, and test artifacts
+.qui/
+imperial_archive/
+test/
+unsigned-test/
+test-project/
+
+
+# ╔══════════════════════════════╗
+# ║   🗃️  DATABASE SNAPSHOTS    ║
+# ╚══════════════════════════════╝
+*.sql.bak
+*.dump
+*.sqlite
+*.db
+db-backups/
+
+
+# ╔══════════════════════════════╗
+# ║   🛠️  EDITOR & IDE          ║
+# ╚══════════════════════════════╝
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 *.swp
 *.swo
-.DS_Store
+.project
+.classpath
 
-# 🔮 Testing Records
+
+# ╔══════════════════════════════╗
+# ║   💻 OS ARTIFACTS           ║
+# ╚══════════════════════════════╝
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+# ╔══════════════════════════════╗
+# ║   🧪 COVERAGE & TESTING     ║
+# ╚══════════════════════════════╝
 coverage/
 *.lcov
+.nyc_output/
 test-results/
-
-# 🔥 Temporary Rituals
-tmp/
-/temp/
+playwright-report/
