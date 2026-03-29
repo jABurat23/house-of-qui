@@ -1,69 +1,180 @@
 # House of Qui
 
-> "The official system dynasty for premium, secure, and observable projects."
+> *"The official system dynasty for premium, secure, and observable projects."*
 
 ---
 
-## Blueprint — Imperial Court Hierarchy
+## Imperial Court Hierarchy
 
-Below is the **House of Qui system blueprint**, showing the hierarchy from Monarch down to Specialists, with module responsibilities:
+<img width="1536" height="1024" alt="House of Qui Imperial Blueprint" src="https://github.com/user-attachments/assets/6b2f12c1-bb2f-483e-9239-e00bb0861372" />
 
-<img width="1536" height="1024" alt="ChatGPT Image Mar 1, 2026, 07_47_59 PM" src="https://github.com/user-attachments/assets/6b2f12c1-bb2f-483e-9239-e00bb0861372" />
-
-**Legend:**
-
-* **Monarch** — Supreme authority, core governance, API orchestration, and UX oversight
-* **Right Minister** — Security, RBAC, vault, policy enforcement
-* **Left Minister** — Observability, logging, dashboards, analytics
-* **Chief Stewards / Grand Administrators** — Project configuration, feature deployment, local monitoring
-* **Specialists / Experts** — UX, API modules, automation, plugins, internal tools
-
-This visual represents the **foundational structure** of the official system, ensuring **security, observability, and governance** are central to every project.
+| Rank | Module | Responsibility |
+|------|--------|---------------|
+| 👑 **Monarch** | `src/monarch/` | Supreme authority — core governance, API orchestration, project registry |
+| ⚔️ **Right Minister** | `src/minister/` | Security, RBAC, vault, policy enforcement, ISA seal |
+| 🔭 **Observatory** | `src/modules/observatory/` | Telemetry broadcasting, real-time event streaming |
+| 🏛️ **System** | `src/system/` | Audit, plugins, packages, config, watchtower, pulse monitor |
+| 🖥️ **Dashboard** | `qui-dashboard/` | Sovereign OS — React dashboard with URL-based navigation |
 
 ---
 
-## Directory Structure
+## Tech Stack
+
+**Backend**
+- [NestJS](https://nestjs.com/) — Imperial API core (port `4000`)
+- [TypeORM](https://typeorm.io/) + PostgreSQL — Sovereign data persistence
+- [Socket.io](https://socket.io/) — Real-time telemetry & audit broadcasting
+- [Pino](https://getpino.io/) — Structured logging with themed terminal output
+- `ts-node-dev` — Hot-reload development server
+
+**Dashboard (`qui-dashboard/`)**
+- [React 19](https://react.dev/) + [Vite](https://vitejs.dev/) — Frontend framework
+- [React Router DOM](https://reactrouter.com/) — URL-based multi-chamber navigation
+- [Framer Motion](https://www.framer.com/motion/) — Fluid transitions and animations
+- [Tailwind CSS](https://tailwindcss.com/) — Utility-first styling
+- [Lucide React](https://lucide.dev/) — Imperial icon set
+
+---
+
+## Project Structure
 
 ```
 house-of-qui/
-├─ README.md
-├─ .gitignore
-├─ /docs               # Architecture diagrams, charters
-├─ /monarch            # Core modules & orchestrator
-├─ /right-minister     # Security & governance modules
-├─ /left-minister      # Observability & insight modules
-├─ /stewards           # Project admin modules
-├─ /specialists        # UX, API, automation modules
-└─ /scripts            # Utilities & internal tools
+├── README.md
+├── package.json               # Backend scripts & deps
+├── docs/                      # Architecture diagrams & phase chronicles
+├── src/
+│   ├── main.ts                # Entrypoint
+│   ├── app.module.ts          # NestJS root module
+│   ├── core/
+│   │   └── logger.ts          # ImperialLogger — themed terminal output
+│   ├── monarch/               # Project registry, deployments, rollbacks, archive
+│   ├── minister/              # Right Minister — security, governance
+│   ├── modules/
+│   │   ├── command/           # Remote command execution
+│   │   ├── communication/     # Imperial event bus
+│   │   ├── observatory/       # Telemetry broadcasting
+│   │   └── treasury/          # Imperial fiscal module
+│   ├── system/
+│   │   ├── audit/             # AuditLog service & real-time gateway
+│   │   ├── auth/              # Authentication & session management
+│   │   ├── config/            # System configuration (toggles, flags)
+│   │   ├── monitor/           # Pulse Monitor (real-time diagnostics)
+│   │   ├── packages/          # Package registry & seeding
+│   │   ├── plugins/           # Plugin system (metrics, deployment)
+│   │   ├── sentry/            # Intrusion detection & anomaly tracking
+│   │   ├── security/          # ISA root seal, token signing
+│   │   └── watchtower/        # Alert channels & event routing
+│   └── registry/              # In-memory project discovery registry
+└── qui-dashboard/             # Sovereign OS — React Dashboard
+    └── src/
+        ├── pages/
+        │   ├── Throne.tsx         # Overview — sovereign metrics
+        │   ├── WarCouncil.tsx     # Security — threat signals
+        │   ├── Archives.tsx       # Grand Archives — audit logs
+        │   ├── Treasury.tsx       # Fiscal overview
+        │   ├── Forge.tsx          # Project forge & deployments
+        │   ├── CommandCenter.tsx  # Remote command execution UI
+        │   └── Settings.tsx       # Theme & session settings
+        ├── layouts/
+        │   └── CourtLayout.tsx    # Collapsible sidebar + chronicle drawer
+        └── api/
+            ├── client.ts          # Axios Imperial API client
+            └── socket.ts          # Socket.io real-time client
 ```
 
 ---
 
-## CLI / Command-Style Interface
+## Getting Started
+
+**Prerequisites:** Node.js 18+, PostgreSQL
+
+### 1. Clone & Install
 
 ```bash
-# Monarch commands
+git clone https://github.com/jABurat23/house-of-qui.git
+cd house-of-qui
+npm install
+cd qui-dashboard && npm install && cd ..
+```
+
+### 2. Database Setup
+
+```bash
+# Create the database
+psql -U postgres -c "CREATE DATABASE house_of_qui;"
+```
+
+### 3. Run the System
+
+```bash
+# Terminal 1 — Imperial API (port 4000)
+npm run dev
+
+# Terminal 2 — Sovereign Dashboard (port 5173)
+cd qui-dashboard && npm run dev
+```
+
+### 4. Access
+
+| Service | URL |
+|---------|-----|
+| 🖥️ Dashboard | http://localhost:5173 |
+| 🏛️ API Core | http://localhost:4000 |
+
+---
+
+## CLI — The `qui` Command
+
+```bash
+# Project management
+qui project init
+qui project update
 qui status
-qui observe --all
+
+# Deployment
 qui deploy api
 
-# Right Minister commands
+# Security
 qui security audit
 qui vault list
 
-# Left Minister commands
+# Observability
 qui monitor metrics
 qui logs fetch
 
-# Chief Stewards / Project Admins
-qui project init
-qui project update
-
-# Specialists / Experts
+# Plugins
 qui plugin install
-qui ux deploy
-qui api refresh
 ```
+
+---
+
+## Dashboard Chambers
+
+| Chamber | Path | Purpose |
+|---------|------|---------|
+| 👑 Throne | `/overview` | Sovereign metrics & project overview |
+| 🖥️ Command Center | `/command` | Remote command execution |
+| ⚔️ War Council | `/security` | Security events & threat signals |
+| 📜 Grand Archives | `/archives` | Audit log history |
+| 💰 Treasury | `/treasury` | Fiscal reserves & transactions |
+| ⚒️ The Forge | `/forge` | Project builds & deployments |
+| ⚙️ Settings | `/settings` | Theme, session & preferences |
+
+---
+
+## Terminal Logging
+
+The system uses a themed **ImperialLogger** for all backend output:
+
+```
+[HH:MM:SS] █ MONARCH   :: Imperial API core active on port 4000.
+[HH:MM:SS] █ SYSTEM    :: Heartbeat: DB ●  METRICS ●  LOAD 0.12
+[HH:MM:SS] █ SECURITY  :: Imperial Root Seal loaded.
+[HH:MM:SS] █ LOGISTICS :: Imperial library archives synchronized.
+```
+
+Real-time **Pulse Monitor** runs every 30 seconds to verify database and plugin health.
 
 ---
 
