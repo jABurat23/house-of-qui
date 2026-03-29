@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImperialEvent } from './entities/event.entity';
-import { getIoInstance } from '../../server/server';
+import { AuditGateway } from '../../system/audit/audit.gateway';
 import { AuditService } from '../../system/audit/audit.service';
 
 @Injectable()
@@ -11,6 +11,7 @@ export class CommunicationService {
         @InjectRepository(ImperialEvent)
         private eventRepository: Repository<ImperialEvent>,
         private auditService: AuditService,
+        private auditGateway: AuditGateway,
     ) { }
 
     async emitEvent(sourceId: string, type: string, payload: any, targetId?: string): Promise<ImperialEvent> {
@@ -25,8 +26,7 @@ export class CommunicationService {
         const saved = await this.eventRepository.save(event);
 
         // Dispatch via Socket.io
-        const io = getIoInstance();
-        if (io) {
+        if (this.auditGateway.server) {
             const socketPayload = {
                 id: saved.id,
                 source: sourceId,
@@ -37,10 +37,10 @@ export class CommunicationService {
 
             if (targetId) {
                 // Direct event - in a real system we'd use rooms/socket IDs
-                io.to(`project_${targetId}`).emit('imperial_event', socketPayload);
+                this.auditGateway.server.to(`project_${targetId}`).emit('imperial_event', socketPayload);
             } else {
                 // Broadcast to all
-                io.emit('imperial_event', socketPayload);
+                this.auditGateway.server.emit('imperial_event', socketPayload);
             }
         }
 

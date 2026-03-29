@@ -19,6 +19,7 @@ import { CartographerModule } from './monarch/cartographer/cartographer.module';
 import { ScribeModule } from './monarch/scribe/scribe.module';
 import { GlobalSecurityModule } from './system/security/security.module';
 import { AuthModule } from './system/auth/auth.module';
+import { SystemMonitorModule } from './system/monitor/monitor.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { AuthModule } from './system/auth/auth.module';
     CartographerModule,
     ScribeModule,
     GlobalSecurityModule,
-    AuthModule
+    AuthModule,
+    SystemMonitorModule
   ],
 })
 export class AppModule { }

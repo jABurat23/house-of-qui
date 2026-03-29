@@ -10,6 +10,8 @@ import { ArchiveService } from './archive/archive.service';
 
 @Injectable()
 export class MonarchService {
+  private projectsCache: Project[] | null = null;
+
   constructor(
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
@@ -30,6 +32,7 @@ export class MonarchService {
     });
 
     const savedProject = await this.projectRepository.save(project);
+    this.projectsCache = null; // Invalidate cache
 
     await this.auditService.recordAction({
       action: 'PROJECT_CREATED',
@@ -42,10 +45,16 @@ export class MonarchService {
   }
 
   async getAllProjects(): Promise<Project[]> {
-    return this.projectRepository.find();
+    if (this.projectsCache) return this.projectsCache;
+    this.projectsCache = await this.projectRepository.find();
+    return this.projectsCache;
   }
 
   async getProjectById(id: string): Promise<Project | null> {
+    if (this.projectsCache) {
+      const p = this.projectsCache.find(x => x.id === id);
+      if (p) return p;
+    }
     return this.projectRepository.findOneBy({ id });
   }
 

@@ -1,14 +1,58 @@
-import { motion } from "framer-motion";
-import { Database, Search, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Database, Search, ShieldAlert, Map, TerminalSquare } from "lucide-react";
+import { useState } from "react";
+import Cartographer from "./Cartographer";
+import CommandCenter from "./CommandCenter";
 
 interface ArchivesProps {
   logs: any[];
 }
 
 export default function Archives({ logs }: ArchivesProps) {
+  const [activeSubTab, setActiveSubTab] = useState<"logs" | "map" | "command">("logs");
+
   return (
-    <div className="flex flex-col h-full gap-6">
-      <div className="flex items-center justify-between mb-4 border-b border-primary/10 pb-6 shrink-0">
+    <div className="flex flex-col h-full gap-4">
+      {/* Sub-Navigation */}
+      <div className="flex gap-2 border-b border-primary/10 pb-4 shrink-0 overflow-x-auto scrollbar-none">
+        <button 
+          onClick={() => setActiveSubTab("logs")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] uppercase font-bold tracking-widest transition-all ${
+            activeSubTab === "logs" ? "bg-primary/20 text-primary border border-primary/40 shadow-imperial-gold" : "bg-black/20 text-primary/40 border border-primary/10 hover:border-primary/20 hover:text-primary/60"
+          }`}
+        >
+          <Database className="w-4 h-4" />
+          Event Logs
+        </button>
+        <button 
+          onClick={() => setActiveSubTab("map")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] uppercase font-bold tracking-widest transition-all ${
+            activeSubTab === "map" ? "bg-accent/20 text-accent border border-accent/40 shadow-neon-cyan" : "bg-black/20 text-primary/40 border border-primary/10 hover:border-primary/20 hover:text-primary/60"
+          }`}
+        >
+          <Map className="w-4 h-4" />
+          Topology & Scribe
+        </button>
+        <button 
+          onClick={() => setActiveSubTab("command")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] uppercase font-bold tracking-widest transition-all ${
+            activeSubTab === "command" ? "bg-red-500/20 text-red-500 border border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.3)]" : "bg-black/20 text-primary/40 border border-primary/10 hover:border-primary/20 hover:text-primary/60"
+          }`}
+        >
+          <TerminalSquare className="w-4 h-4" />
+          Remote Operations
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-hidden relative">
+        <AnimatePresence mode="wait">
+          {activeSubTab === "logs" && (
+            <motion.div 
+               key="logs" 
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+               className="h-full absolute inset-0 flex flex-col gap-6"
+            >
+              <div className="flex items-center justify-between mb-4 border-b border-primary/10 pb-6 shrink-0">
          <div>
             <h2 className="text-xl font-cinzel tracking-[4px] uppercase font-bold text-primary mb-1">Grand Archives</h2>
             <p className="text-[10px] uppercase opacity-40">Consulting the Eternal Chronicle of House of Qui</p>
@@ -62,6 +106,23 @@ export default function Archives({ logs }: ArchivesProps) {
              </div>
           )}
         </div>
+      </div>
+            </motion.div>
+          )}
+
+          {activeSubTab === "map" && (
+            <motion.div key="map" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="h-full absolute inset-0">
+               <Cartographer />
+            </motion.div>
+          )}
+
+          {activeSubTab === "command" && (
+            <motion.div key="command" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="h-full absolute inset-0">
+               <CommandCenter />
+            </motion.div>
+          )}
+
+        </AnimatePresence>
       </div>
     </div>
   );

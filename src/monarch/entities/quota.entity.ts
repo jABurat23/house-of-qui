@@ -22,6 +22,15 @@ export class ResourceQuota {
     @Column({ default: 100 }) // Max concurrent requests/s
     requestRateLimit!: number;
 
+    @Column({ default: 0 }) // MB — updated by real usage reporters
+    usedMemory!: number;
+
+    @Column({ default: 0 }) // millicores — updated by real usage reporters
+    usedCpu!: number;
+
+    @Column({ default: 0 }) // MB — updated by real usage reporters
+    usedStorage!: number;
+
     @CreateDateColumn()
     createdAt!: Date;
 

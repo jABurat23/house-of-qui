@@ -3,110 +3,79 @@
 ## Quick Start
 
 ### Prerequisites
-- **Node.js** 18+ 
+- **Node.js** 18+
 - **PostgreSQL** 12+ (running locally or via Docker)
-- **npm** or **yarn**
 
 ### Setup
 
-1. **Install dependencies** (root and dashboard):
 ```bash
+# 1. Install backend dependencies
 npm install
+
+# 2. Install dashboard dependencies
 cd qui-dashboard && npm install && cd ..
 ```
 
-2. **Configure database**:
-Create a PostgreSQL database named `house_of_qui`:
+Create `.env` from the template:
 ```bash
-createdb house_of_qui
+cp .env.example .env
+# Edit .env with your database credentials and secret
 ```
 
-Or use Docker:
+### Database setup
+
+```bash
+psql -U postgres -c "CREATE DATABASE house_of_qui;"
+```
+
+Or via Docker:
 ```bash
 docker run -d \
   --name qui-postgres \
-  -e POSTGRES_PASSWORD=qui_the_great \
+  -e POSTGRES_PASSWORD=your-password \
   -e POSTGRES_DB=house_of_qui \
   -p 5432:5432 \
   postgres:15
-```
-
-3. **Environment (optional)**:
-Create a `.env` file in the root:
-```
-QUI_SECRET=your-custom-secret-key
 ```
 
 ---
 
 ## Running the System
 
-### Start the Backend API Server (Port 4000)
+### Terminal 1 — Imperial Core (API + WebSocket Gateway, Port 4000)
 ```bash
 npm run dev
 ```
 
-This runs:
-- NestJS API server (port 4000)
-- TypeORM with PostgreSQL
-- Bootstrap system initialization
+This starts:
+- NestJS API server on **port 4000**
+- TypeORM sync with PostgreSQL
+- NestJS WebSocket Gateway (Socket.io) — **also on port 4000** (no separate server)
+- Package registry seeding
 
-### Start the Socket.IO Server (Port 3000)
-In a separate terminal, from `src/server/server.ts`:
-```bash
-# The server currently runs within the bootstrap process
-# It listens on port 3000 for dashboard connections
-```
-
-**Note**: Currently the socket server is initialized in `src/system/bootstrap.ts`. It will emit events when projects register.
-
-### Start the Dashboard (Port 5173)
+### Terminal 2 — Dynasty Interface (Port 5173)
 ```bash
 cd qui-dashboard
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:5173](http://localhost:5173).
+
+> **Note**: The Socket.io client in `qui-dashboard/src/api/socket.ts` connects to `localhost:4000` — the same port as the REST API. This is by design since the WebSocket Gateway is integrated into the NestJS app via `@WebSocketGateway()`.
 
 ---
 
-## Phase H — Autonomous Projects (Current)
+## Granting Throne Access (First-Time Setup)
 
-### Registering a Project
-
-Use the `qui init` CLI command to register a new project:
+On first run, create the Monarch user:
 
 ```bash
-npm run qui -- init \
-  --name "My Project" \
-  --description "My awesome project" \
-  --repository "https://github.com/user/project" \
-  --version "1.0.0"
+curl -X POST http://localhost:4000/auth/ritual/grant-throne \
+  -H "Content-Type: application/json" \
+  -d '{"name": "YourImperialName", "key": "YourSecurePassword"}'
 ```
 
-Output:
-```
-Project registered:
-{ id: 'uuid...', name: 'My Project', ... }
-Service token (store this securely):
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-### What Happens When You Register
-
-1. **Backend registers project**:
-   - Creates persistent record in PostgreSQL (`Project` entity)
-   - Registers in in-memory registry for fast lookup
-   - Generates a service token (JWT, 7-day expiry)
-
-2. **Dashboard receives event**:
-   - Socket.io broadcasts `project_registered` event
-   - Dashboard listens and refreshes project list
-   - New project appears in the **ProjectTable** component
-
-3. **Telemetry ready**:
-   - Project can send heartbeats using the token
-   - Observatory tracks project health
+Then visit the dashboard and complete the **Imperial Gate Ritual** (2-step login).
 
 ---
 
@@ -114,211 +83,151 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ```
 house-of-qui/
-├── src/
-│   ├── app.module.ts           # Nest root module
-│   ├── main.ts                 # Entry point
-│   ├── cli/
-│   │   └── commands/
-│   │       ├── init.ts         # 🆕 `qui init` command
-│   │       ├── projects.ts     # List projects
-│   │       └── status.ts       # System status
-│   ├── monarch/
-│   │   ├── monarch.controller.ts  # 🔄 Updated: emits socket on register
-│   │   ├── monarch.service.ts     # CRUD service
-│   │   ├── monarch.module.ts      # Provides TelemetryBroadcaster
-│   │   └── entities/project.entity.ts
-│   ├── observatory/
-│   │   ├── telemetryStore.ts      # In-memory telemetry cache
-│   │   ├── telemetryBroadcaster.ts # 🆕 Socket.io client for emitting events
-│   │   └── telemetryTypes.ts
-│   ├── registry/
-│   │   ├── projectRegistry.ts     # Registry singleton
-│   │   └── projectTypes.ts
-│   ├── security/
-│   │   ├── tokenService.ts        # JWT generation & verification
-│   │   └── authMiddleware.ts
-│   ├── server/
-│   │   └── server.ts              # Socket.io server (port 3000)
-│   └── system/
-│       └── bootstrap.ts           # System initialization
+├── .env                        # Your local environment (not committed)
+├── .env.example                # Environment variable template
+├── .gitignore                  # Root ignore rules
+├── README.md                   # Project overview
+├── package.json                # Backend dependencies
+├── tsconfig.json               # Backend TypeScript config
 │
-└── qui-dashboard/
-    └── src/
-        ├── pages/
-        │   └── Dashboard.tsx       # 🔄 Updated: listens for project_registered
-        ├── components/
-        │   ├── ProjectTable.tsx    # 🔄 Updated: better styling
-        │   ├── ObservatoryPanel.tsx # 🔄 Updated: shows registrations + telemetry
-        │   └── SystemHealth.tsx
-        ├── api/
-        │   ├── client.ts           # Axios instance (port 4000)
-        │   └── socket.ts           # Socket.io client (port 3000)
-        └── types/project.ts        # Project interface
+├── src/                        # Imperial Core (NestJS Backend)
+│   ├── main.ts                 # Entry point
+│   ├── app.module.ts           # Root NestJS module
+│   ├── core/                   # Logger, shared utilities
+│   ├── system/
+│   │   ├── auth/               # Imperial Gate (Argon2, JWT, Seal Challenge)
+│   │   ├── audit/              # Audit trail + WebSocket Gateway (port 4000)
+│   │   ├── watchtower/         # Alert system
+│   │   ├── security/           # ISA signing, seal service
+│   │   ├── packages/           # Package registry (seedable)
+│   │   └── plugins/            # Plugin runtime
+│   ├── monarch/                # Project management
+│   │   ├── entities/           # Project, Deployment, Quota, etc.
+│   │   ├── shadow/             # Shadow project honeypot system
+│   │   ├── cartographer/       # Project universe graph
+│   │   └── logistics/          # Resource quota tracking
+│   ├── modules/
+│   │   ├── treasury/           # Project wallets and credits
+│   │   ├── observatory/        # Telemetry broadcaster
+│   │   └── communication/      # Imperial event bus
+│   └── server/                 # Legacy socket server (superseded by AuditGateway)
+│
+├── qui-dashboard/              # Dynasty Interface (Vite + React + Tailwind v4)
+│   └── src/
+│       ├── App.tsx             # Session manager
+│       ├── main.tsx            # Vite entry point
+│       ├── global.css          # Tailwind v4 theme + custom styles
+│       ├── api/
+│       │   ├── client.ts       # Axios instance (port 4000, auto-auth)
+│       │   └── socket.ts       # Socket.io client (port 4000)
+│       ├── types/
+│       │   └── index.ts        # Shared TypeScript interfaces
+│       ├── layouts/
+│       │   └── CourtLayout.tsx # Main 3-column court layout
+│       └── pages/
+│           ├── ImperialGate.tsx  # Login ritual (2-step)
+│           ├── Dashboard.tsx     # Main orchestrator + socket bindings
+│           ├── Throne.tsx        # Overview chamber
+│           ├── WarCouncil.tsx    # Security / threat signals
+│           ├── Archives.tsx      # Audit log browser
+│           ├── Treasury.tsx      # Project wallets
+│           └── Forge.tsx         # Plugin / artifact registry
+│
+└── docs/
+    ├── README.md               # Documentation index
+    ├── setup/                  # Dev guides and architecture docs
+    └── phases/                 # Phase implementation records
 ```
 
 ---
 
 ## API Endpoints
 
+### Authentication
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/auth/ritual/grant-throne` | Seed initial Monarch user |
+| POST | `/auth/ritual/request` | Step 1: Verify identity + issue Seal Challenge |
+| POST | `/auth/ritual/complete` | Step 2: Verify Seal + sign JWT |
+
 ### Projects
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/monarch/projects` | List all projects |
+| POST | `/monarch/projects/register` | Register new project + get service token |
+| GET | `/monarch/projects/:id` | Get single project |
 
-- `POST /monarch/projects` — Create project
-- `GET /monarch/projects` — List all projects
-- `GET /monarch/projects/:id` — Get project by ID
-- **`POST /monarch/projects/register`** — 🆕 Register & get token
+### Audit
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/system/audit` | Full audit log (default 100) |
+| GET | `/system/audit/recent` | Last 50 events |
 
-**Example: Register a project via API**
-```bash
-curl -X POST http://localhost:4000/monarch/projects/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Nexus A06",
-    "description": "Android tools",
-    "repository": "https://github.com/user/nexus",
-    "version": "0.1.0"
-  }'
-```
+### Treasury
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/monarch/treasury/summary` | All wallets + total balance |
+| GET | `/monarch/treasury/wallet/:id` | Single project wallet |
 
-Response:
-```json
-{
-  "project": {
-    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    "name": "Nexus A06",
-    "description": "Android tools",
-    "status": "active",
-    "createdAt": "2026-03-12T10:00:00Z"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
+### Plugins (Forge)
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/plugins` | List all registered plugins |
+| GET | `/plugins/:id` | Get plugin details |
+| POST | `/plugins/:id/enable` | Enable a plugin |
+| POST | `/plugins/:id/disable` | Disable a plugin |
 
 ---
 
-## CLI Commands
+## WebSocket Events
 
-### `qui status`
-Check system health:
-```bash
-npm run qui -- status
-```
-
-### `qui projects`
-List all registered projects:
-```bash
-npm run qui -- projects
-```
-
-### `qui init` (Phase H)
-Register a new project:
-```bash
-npm run qui -- init --name "My Project"
-```
-
----
-
-## Socket Events
+All events flow through the `AuditGateway` on **port 4000**.
 
 ### Server → Dashboard
-
-- **`project_registered`** — New project registered
-  ```json
-  {
-    "projectId": "uuid",
-    "name": "Project Name",
-    "version": "1.0.0",
-    "timestamp": "2026-03-12T10:00:00Z"
-  }
-  ```
-
-- **`telemetry_update`** — Project sent heartbeat
-  ```json
-  {
-    "projectId": "uuid",
-    "status": "healthy",
-    "version": "1.0.0",
-    "timestamp": "2026-03-12T10:00:00Z"
-  }
-  ```
-
-### Dashboard → Server
-
-- **`connect`** — Dashboard connected
-- **`disconnect`** — Dashboard disconnected
+| Event | Description |
+|---|---|
+| `audit:broadcast` | New audit log entry (real-time) |
+| `telemetry:identity` | Telemetry update (triggers project refresh) |
+| `project_registered` | New project registered |
+| `health_report` | Project health update |
+| `security_alert` | Security event fired |
+| `wallet_update` | Treasury balance changed |
+| `resource_usage` | Resource quota update |
 
 ---
 
-## Debugging
+## CLI Commands (`qui`)
 
-### View logs
 ```bash
-# Backend logs (NestJS)
-npm run dev
+# Check system status
+npm run qui -- status
 
-# Dashboard console
-# Open DevTools (F12) → Console tab
+# List registered projects
+npm run qui -- projects
+
+# Register a new project
+npm run qui -- init --name "My Project" --version "1.0.0"
 ```
-
-### Test API directly
-```bash
-# Get projects
-curl http://localhost:4000/monarch/projects
-
-# Register a project
-curl -X POST http://localhost:4000/monarch/projects/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","version":"0.1.0"}'
-```
-
-### Reset database
-```bash
-# Drop and recreate
-dropdb house_of_qui
-createdb house_of_qui
-npm run dev  # TypeORM will sync schema
-```
-
----
-
-## What's Next (Phase I+)
-
-- **Phase I** — Plugin architecture for extensibility
-- **Phase J** — Deployment system (`qui deploy`)
-- **Phase K** — Enhanced monitoring (CPU, memory, logs)
-- **Phase L** — Package registry (`qui install house/auth`)
 
 ---
 
 ## Troubleshooting
 
-### Dashboard shows "No projects registered yet"
-- Ensure backend API is running on port 4000: `npm run dev`
-- Check browser console for network errors
-- Verify CORS is enabled (should be in server.ts)
+### "Connection refused" on dashboard
+- Ensure backend is running: `npm run dev` in root
+- Confirm port 4000 is available
+- Check database is running and accessible
 
-### `qui init` fails with "ECONNREFUSED"
-- Backend API must be running: `npm run dev`
-- Check if port 4000 is in use: `lsof -i :4000`
-- Database must be running: `psql -U postgres -d house_of_qui`
+### Socket events not appearing in Chronicle
+- Both the REST API and Socket.io run on port 4000
+- Verify `qui-dashboard/src/api/socket.ts` points to `localhost:4000`
+- Check browser console for `Dynasty Dashboard connected:` in terminal output
 
-### Socket events not showing in Observatory
-- Dashboard must connect to socket server on port 3000
-- Check `qui-dashboard/src/api/socket.ts` baseURL
-- Ensure backend socket server is initialized in bootstrap
+### TypeORM sync errors  
+- Verify PostgreSQL is running: `psql -U postgres -d house_of_qui`
+- Check `.env` database credentials match your setup
+- TypeORM will auto-sync schema on first run (synchronize: true)
 
-### TypeORM sync errors
-- Verify PostgreSQL is running and accessible
-- Check `src/app.module.ts` for correct credentials
-- View error logs in terminal running `npm run dev`
-
----
-
-## Development Workflow
-
-1. **Make changes** to backend (src/) or frontend (qui-dashboard/src/)
-2. **Backend auto-reloads** via ts-node-dev (watch mode)
-3. **Dashboard auto-reloads** via Vite HMR
-4. **Test via CLI** or dashboard UI
-5. **Check socket events** in Observatory panel
-
----
+### 401 Unauthorized on API calls
+- The Axios client auto-attaches the JWT from `imperial_session` in localStorage
+- If token expired, logout and re-authenticate via the Imperial Gate

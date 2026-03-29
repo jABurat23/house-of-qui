@@ -87,7 +87,7 @@ export class CartographerService {
         return this.scanDirectory(path.join(process.cwd(), 'src'));
     }
 
-    return this.mockCodeGraph(projectId);
+    return this.noCodeGraph(projectId);
   }
 
   private checkRole(userRole: string, requiredRole: string): boolean {
@@ -139,15 +139,11 @@ export class CartographerService {
     return { nodes, links };
   }
 
-  private mockCodeGraph(projectId: string) {
+  private noCodeGraph(projectId: string) {
       return {
-          nodes: [
-              { id: 'main.py', label: 'main.py', type: 'source_file', content: 'print("Imperial Protocol Active")' },
-              { id: 'utils.py', label: 'utils.py', type: 'source_file', content: 'def scan(): pass' }
-          ],
-          links: [
-              { source: 'main.py', target: 'utils.py', type: 'import' }
-          ]
+          nodes: [],
+          links: [],
+          message: `Source graph not available for external project: ${projectId}`
       };
   }
 

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ImperialCommand } from './entities/command.entity';
 import { CommunicationService } from '../communication/communication.service';
 import { AuditService } from '../../system/audit/audit.service';
-import { getIoInstance } from '../../server/server';
+import { AuditGateway } from '../../system/audit/audit.gateway';
 
 @Injectable()
 export class CommandService {
@@ -13,6 +13,7 @@ export class CommandService {
     private commandRepository: Repository<ImperialCommand>,
     private communicationService: CommunicationService,
     private auditService: AuditService,
+    private auditGateway: AuditGateway,
   ) {}
 
   async executeRemoteCommand(projectId: string, command: string, args: any = {}) {
@@ -45,9 +46,8 @@ export class CommandService {
   }
 
   private broadcastOutput(commandId: string, chunk: string) {
-    const io = getIoInstance();
-    if (io) {
-        io.emit('command_output', { commandId, chunk });
+    if (this.auditGateway.server) {
+        this.auditGateway.server.emit('command_output', { commandId, chunk });
     }
   }
 

@@ -1,6 +1,8 @@
 const ANSI = {
   RESET: "\x1b[0m",
   BOLD: "\x1b[1m",
+  DIM: "\x1b[2m",
+  ITALIC: "\x1b[3m",
   GOLD: "\x1b[38;5;220m",
   RED: "\x1b[31m",
   CYAN: "\x1b[36m",
@@ -20,23 +22,13 @@ const realmColors: Record<string, string> = {
   AUDIT: ANSI.GREY
 };
 
-const realmIcons: Record<string, string> = {
-  MONARCH: "👑",
-  SECURITY: "🛡️ ",
-  TREASURY: "💎",
-  SYSTEM: "⚙️ ",
-  INTEL: "👁️ ",
-  LOGISTICS: "🚛",
-  AUDIT: "📜"
-};
-
 class ImperialLogger {
   private formatHeader(realm: string) {
     const color = realmColors[realm] || ANSI.GOLD;
-    const icon = realmIcons[realm] || "🏛️ ";
-    const timestamp = new Date().toLocaleTimeString();
+    const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+    const paddedRealm = realm.padEnd(9, ' ');
     
-    return `${ANSI.GREY}[${timestamp}]${ANSI.RESET} ${color}${ANSI.BOLD}${icon} [${realm}]${ANSI.RESET}`;
+    return `${ANSI.GREY}[${timestamp}]${ANSI.RESET} ${color}█${ANSI.RESET} ${color}${ANSI.BOLD}${paddedRealm}${ANSI.RESET} ${ANSI.DIM}::${ANSI.RESET}`;
   }
 
   monarch(msg: string) {
@@ -64,7 +56,7 @@ class ImperialLogger {
   }
 
   audit(msg: string) {
-    console.log(`${this.formatHeader("AUDIT")} ${msg}`);
+    console.log(`${this.formatHeader("AUDIT")} ${ANSI.GREY}${msg}${ANSI.RESET}`);
   }
 
   info(msg: string) {
@@ -83,10 +75,34 @@ class ImperialLogger {
 export const logger = new ImperialLogger();
 
 export function logSystemStart() {
+  console.clear();
   console.log(`
-${ANSI.GOLD}${ANSI.BOLD}  🏛️  HOUSE OF QUI — Imperial Sovereign OS${ANSI.RESET}
-${ANSI.GREY}  ——————————————————————————————————————————————————————————————${ANSI.RESET}
+${ANSI.GOLD}${ANSI.BOLD}   ██╗  ██╗ ██████╗ ██╗   ██╗███████╗███████╗ 
+   ██║  ██║██╔═══██╗██║   ██║██╔════╝██╔════╝ 
+   ███████║██║   ██║██║   ██║███████╗█████╗   
+   ██╔══██║██║   ██║██║   ██║╚════██║██╔══╝   
+   ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗ 
+   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝ 
+                  ██████╗ ██╗   ██╗██╗        
+                 ██╔═══██╗██║   ██║██║        
+                 ██║   ██║██║   ██║██║        
+                 ██║▄▄ ██║██║   ██║██║        
+                 ╚██████╔╝╚██████╔╝██║        
+                  ╚══▀▀═╝  ╚═════╝ ╚═╝        
+
+         S O V E R E I G N   O S   V 2 . 0  ${ANSI.RESET}
+${ANSI.GREY}────────────────────────────────────────────────────────${ANSI.RESET}
   `);
-  logger.monarch("The Throne has been established.");
-  logger.system("Imperial Core and Subsystems are normalizing...");
+  
+  const protocols = [
+    "NEURAL_LINK", "QUANTUM_REGISTRY", "IMPERIAL_GATE", "SCRIBE_CHRONICLE"
+  ];
+
+  protocols.forEach(p => {
+    console.log(`${ANSI.GREY}[ INITIALIZING ]${ANSI.RESET} ${ANSI.CYAN}${p.padEnd(20)}${ANSI.RESET} [ ${ANSI.GREEN}READY${ANSI.RESET} ]`);
+  });
+
+  console.log(`${ANSI.GREY}────────────────────────────────────────────────────────${ANSI.RESET}`);
+  logger.monarch("System boot sequence completed. Imperial core online.");
+  logger.system("Allocating core memory architectures...");
 }

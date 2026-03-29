@@ -77,3 +77,53 @@
   transform: translateY(0);
   transition: all 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Light Theme Overrides */
+html.light-theme body {
+  background-color: #f4f6fa;
+  background-image: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%);
+  color: #0f172a;
+}
+
+html.light-theme .imperial-panel {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+html.light-theme .whisper-panel,
+html.light-theme aside {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+html.light-theme .text-white,
+html.light-theme .text-white\/80 {
+  color: #1e293b !important;
+}
+
+html.light-theme .text-white\/60,
+html.light-theme .text-white\/50 {
+  color: #334155 !important;
+}
+
+html.light-theme .text-white\/40,
+html.light-theme .text-white\/30,
+html.light-theme .text-white\/20 {
+  color: #64748b !important;
+}
+
+html.light-theme .bg-black\/40,
+html.light-theme .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+html.light-theme .border-white\/5,
+html.light-theme .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+html.light-theme header.bg-black\/10 {
+  background-color: rgba(255, 255, 255, 0.9);
+}

@@ -98,14 +98,16 @@ export class LogisticsService implements OnModuleInit {
         const quotas = await this.quotaRepository.find({ relations: ['project'] });
 
         for (const quota of quotas) {
-            // Simulate real-time usage metrics centered around 40-70% of quota
-            const usage = {
-                memory: Math.floor(quota.memoryLimit * (0.4 + Math.random() * 0.3)),
-                cpu: Math.floor(quota.cpuLimit * (0.2 + Math.random() * 0.5)),
-                storage: Math.floor(quota.storageLimit * (0.6 + Math.random() * 0.1)),
-            };
+      if (!quota.project) continue;
 
-            this.telemetryBroadcaster.broadcastResourceUsage(quota.project.id, quota.project.name, usage, {
+        // Broadcast the actual quota limits as current usage baseline
+        const usage = {
+          memory: quota.usedMemory ?? 0,
+          cpu: quota.usedCpu ?? 0,
+          storage: quota.usedStorage ?? 0,
+        };
+
+        this.telemetryBroadcaster.broadcastResourceUsage(quota.project.id, quota.project.name, usage, {
                 memory: quota.memoryLimit,
                 cpu: quota.cpuLimit,
                 storage: quota.storageLimit

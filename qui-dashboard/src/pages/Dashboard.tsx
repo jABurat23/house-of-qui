@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { api } from "../api/client";
 import { socket } from "../api/socket";
 import CourtLayout from "../layouts/CourtLayout";
@@ -7,16 +8,22 @@ import WarCouncil from "./WarCouncil";
 import Archives from "./Archives";
 import Treasury from "./Treasury";
 import Forge from "./Forge";
+import Settings from "./Settings";
+import CommandCenter from "./CommandCenter";
+import type { Project, AuditLog, ImperialSession } from "../types";
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
 export default function Dashboard({ onLogout }: DashboardProps) {
-  const [projects, setProjects] = useState([]);
-  const [logs, setLogs] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("overview");
-  const session = JSON.parse(localStorage.getItem("imperial_session") || "{}");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const navigate = useNavigate();
+  
+  const session = JSON.parse(
+    localStorage.getItem("imperial_session") || "{}"
+  ) as ImperialSession;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,33 +62,28 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     };
   }, []);
 
-  const renderActiveChamber = () => {
-    switch (activeTab) {
-      case "overview":
-        return <Throne projects={projects} />;
-      case "security":
-        return <WarCouncil logs={logs} />;
-      case "archives":
-        return <Archives logs={logs} />;
-      case "treasury":
-        return <Treasury />;
-      case "forge":
-        return <Forge />;
-      default:
-        return <Throne projects={projects} />;
-    }
+  const handleLogout = () => {
+    onLogout();
+    navigate("/login");
   };
 
   return (
     <CourtLayout 
-      activeTab={activeTab} 
-      setActiveTab={setActiveTab} 
-      onLogout={onLogout} 
+      onLogout={handleLogout} 
       session={session}
       logs={logs}
     >
       <div className="h-full">
-         {renderActiveChamber()}
+         <Routes>
+           <Route path="/overview" element={<Throne projects={projects} logs={logs} />} />
+           <Route path="/command" element={<CommandCenter />} />
+           <Route path="/security" element={<WarCouncil logs={logs} />} />
+           <Route path="/archives" element={<Archives logs={logs} />} />
+           <Route path="/treasury" element={<Treasury />} />
+           <Route path="/forge" element={<Forge projects={projects} />} />
+           <Route path="/settings" element={<Settings />} />
+           <Route path="/" element={<Navigate to="/overview" replace />} />
+         </Routes>
       </div>
     </CourtLayout>
   );
